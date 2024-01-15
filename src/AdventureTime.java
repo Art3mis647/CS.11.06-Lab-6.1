@@ -22,7 +22,12 @@ public class AdventureTime {
      * @throws IOException
      */
     public static int challengeOne(String fileName) throws IOException {
-        return 0;
+        int[] data = readFile(fileName);
+        int count = 0;
+        for (int i = 0; i < data.length-1; i++) {
+            if (data[i+1]>data[i]) count++;
+        }
+        return count;
     }
 
     /** TODO 2
@@ -34,7 +39,17 @@ public class AdventureTime {
      * @throws FileNotFoundException
      */
     public static int challengeTwo(String fileName) throws FileNotFoundException {
-        return 0;
+        int[] data = readFile(fileName), sums = new int[data.length/3];
+        int sumsC = 0, count = 0;
+        for (int i = 0; i < data.length-2; i++) {
+            sums[i] = data[i] + data[i+1] + data[i+2];
+        }
+        for (int i = 0; i < sums.length-1; i++) {
+            if(sums[i+1]>sums[i]){
+                count++;
+            }
+        }
+        return count;
     }
 
     /** TODO 3
@@ -46,7 +61,20 @@ public class AdventureTime {
      * @throws FileNotFoundException
      */
     public static int challengeThree(String fileName) throws FileNotFoundException {
-        return 0;
+        int horizontal = 0;
+        int vertical = 0;
+        File file = new File(fileName);
+        Scanner scanner = new Scanner(file);
+        String[][] arr = new String[countLinesInFile(fileName)][2];
+        for (int i = 0; i < countLinesInFile(fileName); i++) {
+            arr[i] = scanner.nextLine().split(" ");
+        }
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i][0].equals("forward")) horizontal+=Integer.parseInt(arr[i][1]);
+            if (arr[i][0].equals("up")) vertical-=Integer.parseInt(arr[i][1]);
+            if (arr[i][0].equals("down")) vertical+=Integer.parseInt(arr[i][1]);
+        }
+        return horizontal * vertical;
     }
 
     /** TODO 4
@@ -58,7 +86,24 @@ public class AdventureTime {
      * @throws FileNotFoundException
      */
     public static int challengeFour(String filename) throws FileNotFoundException {
-        return 0;
+        int horizontal = 0;
+        int vertical = 0;
+        int aim = 0;
+        File file = new File(filename);
+        Scanner scanner = new Scanner(file);
+        String[][] arr = new String[countLinesInFile(filename)][2];
+        for (int i = 0; i < countLinesInFile(filename); i++) {
+            arr[i] = scanner.nextLine().split(" ");
+        }
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i][0].equals("forward")) {
+                horizontal += Integer.parseInt(arr[i][1]);
+                vertical += Integer.parseInt(arr[i][1]) * aim;
+            }
+            if (arr[i][0].equals("up")) aim-=Integer.parseInt(arr[i][1]);
+            if (arr[i][0].equals("down")) aim+=Integer.parseInt(arr[i][1]);
+        }
+        return horizontal * vertical;
     }
 
     /** This method will write the values passed as challengeOne, challengeTwo, challengeThree, and challengeFour to a text file.
