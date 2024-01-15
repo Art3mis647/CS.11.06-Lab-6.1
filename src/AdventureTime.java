@@ -9,7 +9,8 @@ public class AdventureTime {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
-
+        int challengeOneAnswer = challengeOne("./inputOneTwo.txt"), challengeTwoAnswer = challengeTwo("./inputOneTwo.txt"), challengeThreeAnswer = challengeThree("./inputThreeFour.txt"), challengeFourAnswer = challengeFour("./inputThreeFour.txt");
+        writeFileAllAnswers("AdventureTime.txt", challengeOneAnswer, challengeTwoAnswer, challengeThreeAnswer, challengeFourAnswer);
 
     }
 
@@ -39,13 +40,13 @@ public class AdventureTime {
      * @throws FileNotFoundException
      */
     public static int challengeTwo(String fileName) throws FileNotFoundException {
-        int[] data = readFile(fileName), sums = new int[data.length/3];
-        int sumsC = 0, count = 0;
-        for (int i = 0; i < data.length-2; i++) {
-            sums[i] = data[i] + data[i+1] + data[i+2];
+        int[] data = readFile(fileName), sums = new int[data.length];
+        int count = 0;
+        for (int i  = 0; i < data.length-2; i++) {
+            sums[i] = data[i]+data[i+1]+data[i+2];
         }
         for (int i = 0; i < sums.length-1; i++) {
-            if(sums[i+1]>sums[i]){
+            if (sums[i+1]>sums[i]) {
                 count++;
             }
         }
@@ -61,20 +62,17 @@ public class AdventureTime {
      * @throws FileNotFoundException
      */
     public static int challengeThree(String fileName) throws FileNotFoundException {
+        int vert = 0;
         int horizontal = 0;
-        int vertical = 0;
-        File file = new File(fileName);
-        Scanner scanner = new Scanner(file);
-        String[][] arr = new String[countLinesInFile(fileName)][2];
-        for (int i = 0; i < countLinesInFile(fileName); i++) {
-            arr[i] = scanner.nextLine().split(" ");
+        String[][] arr = readFile2D(fileName);
+        for (String[] j : arr) {
+            switch (j[0]) {
+                case "forward" -> horizontal+=Integer.parseInt(j[1]);
+                case "down" ->  vert+=Integer.parseInt(j[1]);
+                case "up" -> vert-=Integer.parseInt(j[1]);
+            }
         }
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i][0].equals("forward")) horizontal+=Integer.parseInt(arr[i][1]);
-            if (arr[i][0].equals("up")) vertical-=Integer.parseInt(arr[i][1]);
-            if (arr[i][0].equals("down")) vertical+=Integer.parseInt(arr[i][1]);
-        }
-        return horizontal * vertical;
+        return vert*horizontal;
     }
 
     /** TODO 4
@@ -86,24 +84,21 @@ public class AdventureTime {
      * @throws FileNotFoundException
      */
     public static int challengeFour(String filename) throws FileNotFoundException {
-        int horizontal = 0;
-        int vertical = 0;
         int aim = 0;
-        File file = new File(filename);
-        Scanner scanner = new Scanner(file);
-        String[][] arr = new String[countLinesInFile(filename)][2];
-        for (int i = 0; i < countLinesInFile(filename); i++) {
-            arr[i] = scanner.nextLine().split(" ");
-        }
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i][0].equals("forward")) {
-                horizontal += Integer.parseInt(arr[i][1]);
-                vertical += Integer.parseInt(arr[i][1]) * aim;
+        int depth = 0;
+        int horizontal = 0;
+        String[][] arr = readFile2D(filename);;
+        for (String[] i : arr) {
+            switch (i[0]) {
+                case "forward" -> {
+                    horizontal += Integer.parseInt(i[1]);
+                    depth+= aim * Integer.parseInt(i[1]);
+                }
+                case "down" ->  aim+=Integer.parseInt(i[1]);
+                case "up" -> aim-=Integer.parseInt(i[1]);
             }
-            if (arr[i][0].equals("up")) aim-=Integer.parseInt(arr[i][1]);
-            if (arr[i][0].equals("down")) aim+=Integer.parseInt(arr[i][1]);
         }
-        return horizontal * vertical;
+        return horizontal*depth;
     }
 
     /** This method will write the values passed as challengeOne, challengeTwo, challengeThree, and challengeFour to a text file.
@@ -133,6 +128,14 @@ public class AdventureTime {
         }
         scanner.close();
         return data;
+    }
+
+    private static String[][] readFile2D(String filename) throws FileNotFoundException {
+        File file = new File(filename);
+        Scanner scanner = new Scanner(file);
+        String[][] arr = new String[countLinesInFile(filename)][2];
+        for (int i = 0; i < countLinesInFile(filename); i++) arr[i] = scanner.nextLine().split(" ");
+        return arr;
     }
 
     /** This method will count the number of lines in a text file, which it will return.
